@@ -20,15 +20,15 @@ reset="${esc}[0m"
 # col R G B -> 输出真彩色前景转义
 col() { printf '%s[38;2;%s;%s;%sm' "$esc" "$1" "$2" "$3"; }
 
-# 固定配色（RGB）
-C_SEP="58 60 70"       # #3a3c46 分隔符 / 中点
+# 固定配色（RGB）—— 针对偏亮的终端背景调高了低对比元素的亮度
+C_SEP="96 100 116"     # #606474 分隔符 / 中点（原 #3a3c46 太暗）
 C_MODEL="196 181 253"  # #c4b5fd 模型名
-C_EFFORT="90 92 102"   # #5a5c66 推理档
+C_EFFORT="150 154 170" # #969aaa 推理档（原 #5a5c66 几乎看不见）
 C_DIR="232 232 234"    # #e8e8ea 目录
 C_GIT="251 191 36"     # #fbbf24 git:( )
 C_BRANCH="253 230 138" # #fde68a 分支名
-C_WLABEL="74 76 86"    # #4a4c56 窗口标签
-C_EMPTY="30 33 40"     # #1e2128 空条段
+C_WLABEL="128 132 148" # #808494 窗口标签（原 #4a4c56 太暗）
+C_EMPTY="80 84 100"    # #505464 空条段（原 #1e2128 在亮背景上隐形）
 # 阈值色
 C_CYAN="94 234 212"    # #5eead4
 C_AMBER="251 191 36"   # #fbbf24
@@ -107,7 +107,8 @@ segments=()
 
 # 1) 模型 · 推理档
 if [ -n "$model" ]; then
-  MODEL=$(printf '%s' "$model" | sed -E 's/^Claude //; s/ *\([^)]*\)$//' | tr '[:lower:]' '[:upper:]')
+  # 去掉 "Claude " 前缀、" (1M context)" 括号后缀、以及尾部版本号 " 4.8" -> 只留基名
+  MODEL=$(printf '%s' "$model" | sed -E 's/^Claude //; s/ *\([^)]*\)$//; s/ +[0-9]+(\.[0-9]+)*$//' | tr '[:lower:]' '[:upper:]')
   s="$(col $C_MODEL)${MODEL}${reset}"
   if [ -n "$effort" ]; then
     s="${s}$(col $C_SEP) · ${reset}$(col $C_EFFORT)${effort}${reset}"
