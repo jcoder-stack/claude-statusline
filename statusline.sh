@@ -107,8 +107,8 @@ segments=()
 
 # 1) 模型 · 推理档
 if [ -n "$model" ]; then
-  # 去掉 "Claude " 前缀、" (1M context)" 括号后缀、以及尾部版本号 " 4.8" -> 只留基名
-  MODEL=$(printf '%s' "$model" | sed -E 's/^Claude //; s/ *\([^)]*\)$//; s/ +[0-9]+(\.[0-9]+)*$//' | tr '[:lower:]' '[:upper:]')
+  # 去掉 "Claude " 前缀、" (1M context)" 括号后缀，保留版本号（如 "Opus 4.8" -> "OPUS 4.8"）
+  MODEL=$(printf '%s' "$model" | sed -E 's/^Claude //; s/ *\([^)]*\)$//' | tr '[:lower:]' '[:upper:]')
   s="$(col $C_MODEL)${MODEL}${reset}"
   if [ -n "$effort" ]; then
     s="${s}$(col $C_SEP) · ${reset}$(col $C_EFFORT)${effort}${reset}"
