@@ -49,6 +49,7 @@ make_bar() {
   seg=$(( (p * 5 + 50) / 100 ))       # round(pct/100*5)
   (( seg < 0 )) && seg=0
   (( seg > 5 )) && seg=5
+  (( p > 0 && seg < 1 )) && seg=1     # 只要 >0% 就至少亮 1 格
   out="$(threshold "$p")"
   for (( i=0; i<seg; i++ )); do out="$out▰"; done
   out="$out${reset}$(col $C_EMPTY)"
